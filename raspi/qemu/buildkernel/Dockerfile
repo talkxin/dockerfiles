@@ -4,7 +4,10 @@ RUN apt-get update;apt-get install -y \
     sudo \
     git \
     libncurses5-dev \
-    gcc-arm-linux-gnueabihf
+    gcc-arm-linux-gnueabihf \
+    zip \
+    make \
+    gcc
 
 WORKDIR /home/
 RUN git clone https://github.com/talkxin/qemu-rpi-kernel.git
