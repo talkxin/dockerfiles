@@ -2,7 +2,7 @@
 FROM ubuntu:18.04
 RUN apt-get update
 #安装基础软件
-RUN apt-get install -y sudo git vim zip wget
+RUN apt-get install -y git zip
 #noobs必要关联软件
 RUN apt-get install -y make gcc g++ cpio python bc rsync qt4-linguist-tools texinfo
 #清理镜像
