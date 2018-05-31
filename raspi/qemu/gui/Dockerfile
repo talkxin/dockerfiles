@@ -10,4 +10,4 @@ RUN apt-get update && apt-get install -y \
 	libgl1-mesa-glx \
   qemu
 
-ENTRYPOINT [ "/usr/bin/qemu" ]
+ENTRYPOINT [ "/usr/bin/qemu-system-arm" ]
