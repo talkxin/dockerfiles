@@ -2,6 +2,7 @@
 
 QT_TOP_DIR="/opt/qt5/"
 QT_ARMTOOLS="https://github.com/raspberrypi/tools.git"
+QT_ARMTOOLS_DIR="linux-tools"
 QT_TOOLSNAME="arm-linux-gnueabihf"
 QT_VERSION=""
 [[ -z ${QT_EVERYWHERE+x} ]] && QT_EVERYWHERE="https://download.qt.io/archive/qt/5.9/5.9.6/single/qt-everywhere-opensource-src-5.9.6.tar.xz"
@@ -13,9 +14,10 @@ QT_CONFIGURE_OPTS="-prefix $QT_OUTPUT -release -opensource -xplatform linux-arm-
 
 mkdir -p $QT_TOP_DIR && cd $QT_TOP_DIR
 #克隆树莓派官方交叉编译工具
-git clone $QT_ARMTOOLS
+git clone $QT_ARMTOOLS $QT_ARMTOOLS_DIR
+mv $QT_ARMTOOLS_DIR /usr/local/
 #将交叉编译工具添加至配置文件，并使之生效
-echo "export PATH=$QT_TOP_DIR/tools/arm-bcm2708/arm-linux-gnueabihf/bin/:$PATH" > ~/.profile && source ~/.profile
+echo "export PATH=/usr/local/$QT_ARMTOOLS_DIR/arm-bcm2708/arm-linux-gnueabihf/bin/:$PATH" > ~/.profile && source ~/.profile
 
 #下载并解压tslib库
 wget -O tslib $TSLIB_PATH && tar xvf tslib && rm tslib
@@ -37,4 +39,6 @@ sed -i 's/arm-linux-gnueabi/arm-linux-gnueabihf/' qtbase/mkspecs/linux-arm-gnuea
 mkdir qt-build
 cd qt-build
 ../configure $QT_CONFIGURE_OPTS
-make && make install
+make -j4 && make install
+#清理
+rm -rf $QT_TOP_DIR
