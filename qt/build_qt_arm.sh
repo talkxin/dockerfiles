@@ -23,7 +23,7 @@ TSLIB_VERSION=`ls | grep tslib | awk 'NR==1{print $1}'`
 
 #下载并解压QT
 wget -O qt-everywhere $QT_EVERYWHERE && tar xvf qt-everywhere && rm qt-everywhere
-QT_VERSION=`ls | grep qt | awk 'NR==1{print $1}'`
+QT_VERSION=`ls | grep qt-everywhere | awk 'NR==1{print $1}'`
 
 #编译tslib
 cd $QT_TOP_DIR/$TSLIB_VERSION
