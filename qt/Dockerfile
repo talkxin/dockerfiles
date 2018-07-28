@@ -17,3 +17,5 @@ ADD build_qt_arm.sh /opt/qt5/build_qt_arm.sh
 WORKDIR /opt/qt5/
 
 RUN chmod +x build_qt_arm.sh && ./build_qt_arm.sh
+
+WORKDIR /home/
