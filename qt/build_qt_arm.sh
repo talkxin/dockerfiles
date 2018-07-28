@@ -41,6 +41,6 @@ cd qt-build
 ../configure $QT_CONFIGURE_OPTS
 make -j4 && make install
 #将output加入配置文件
-echo "export PATH=$QT_OUTPUT/:$PATH" > ~/.profile && source ~/.profile
+echo "export PATH=$QT_OUTPUT/bin/:$PATH" > ~/.profile && source ~/.profile
 #清理安装包
 rm -rf $QT_TOP_DIR
