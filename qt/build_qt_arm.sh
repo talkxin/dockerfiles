@@ -10,7 +10,7 @@ QT_OUTPUT="/usr/local/qt_output/"
 TSLIB_VERSION=""
 [[ -z ${TSLIB_PATH+x} ]] && TSLIB_PATH="https://github.com/kergoth/tslib/releases/download/1.16-rc2/tslib-1.16-rc2.tar.bz2"
 TSLIB_OUTPUT="/usr/local/tslib/"
-QT_CONFIGURE_OPTS="-prefix $QT_OUTPUT -release -opensource -xplatform linux-arm-gnueabi-g++ -no-opengl -no-dbus -no-icu -no-eglfs -no-iconv -I$TSLIB_OUTPUT/include -L$TSLIB_OUTPUT/lib"
+QT_CONFIGURE_OPTS="-prefix $QT_OUTPUT -release -opensource -xplatform linux-arm-gnueabi-g++ -qvfb -no-opengl -no-dbus -no-icu -no-eglfs -no-iconv -I$TSLIB_OUTPUT/include -L$TSLIB_OUTPUT/lib"
 
 mkdir -p $QT_TOP_DIR && cd $QT_TOP_DIR
 #克隆树莓派官方交叉编译工具
