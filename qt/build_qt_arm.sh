@@ -16,7 +16,7 @@ mkdir -p $QT_TOP_DIR && cd $QT_TOP_DIR
 #克隆树莓派官方交叉编译工具
 git clone $QT_ARMTOOLS $QT_ARMTOOLS_DIR
 mv $QT_ARMTOOLS_DIR /usr/local/
-#将交叉编译工具添加至配置文件，并使之生效
+#将交叉编译工具添加至配置文件，并使之生效 
 echo "export PATH=/usr/local/$QT_ARMTOOLS_DIR/arm-bcm2708/arm-linux-gnueabihf/bin/:$PATH" > ~/.profile && source ~/.profile
 
 #下载并解压tslib库
