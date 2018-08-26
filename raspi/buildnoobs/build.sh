@@ -13,7 +13,9 @@ SKIP_KERNEL_REBUILD=0
 if [ $DEFCONFIG -n ] 
 then
 	echo "build.sh error:unknow linux build deconfig"
-	exit 1
+	echo "default use whith versatile_defconfig build linux"
+	DEFCONFIG=versatile_defconfig
+	# exit 1
 fi
 
 sudo rm -rf ${LINUXVERSION}
@@ -52,7 +54,7 @@ if [ $SKIP_KERNEL_REBUILD -ne 1 ]; then
 
 	#versatile_defconfig
 	#vexpress_defconfig
-	make CROSS_COMPILE=${TOOLS}- ARCH=arm $1
+	make CROSS_COMPILE=${TOOLS}- ARCH=arm DEFCONFIG
 
 	make CROSS_COMPILE=${TOOLS}- ARCH=arm menuconfig
 
