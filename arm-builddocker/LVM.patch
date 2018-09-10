@@ -1,0 +1,51 @@
+diff --git a/lib/misc/configure.h.in b/lib/misc/configure.h.in
+index f137f14..0bb9cd0 100644
+--- a/lib/misc/configure.h.in
++++ b/lib/misc/configure.h.in
+@@ -632,9 +632,6 @@
+    a type exists and the standard includes do not define it. */
+ #undef int8_t
+ 
+-/* Define to rpl_malloc if the replacement function should be used. */
+-#undef malloc
+-
+ /* Define to `int' if <sys/types.h> does not define. */
+ #undef mode_t
+ 
+@@ -644,9 +641,6 @@
+ /* Define to `int' if <sys/types.h> does not define. */
+ #undef pid_t
+ 
+-/* Define to rpl_realloc if the replacement function should be used. */
+-#undef realloc
+-
+ /* Define to `unsigned int' if <sys/types.h> does not define. */
+ #undef size_t
+ 
+diff --git a/tools/Makefile.in b/tools/Makefile.in
+index 1a8db36..8c2f346 100644
+--- a/tools/Makefile.in
++++ b/tools/Makefile.in
+@@ -105,7 +105,7 @@ ifeq ("@DMEVENTD@", "yes")
+ 	LVMLIBS += -ldevmapper-event
+ endif
+ 
+-LVMLIBS += -ldevmapper
++LVMLIBS += -ldevmapper -lpthread
+ 
+ EXPORTED_HEADER = $(srcdir)/lvm2cmd.h
+ EXPORTED_FN_PREFIX = lvm2
+@@ -124,11 +124,11 @@ CFLAGS_dmsetup.o += $(UDEV_CFLAGS) $(EXTRA_EXEC_CFLAGS)
+ 
+ dmsetup: dmsetup.o $(top_builddir)/libdm/libdevmapper.$(LIB_SUFFIX)
+ 	$(CC) $(CFLAGS) $(LDFLAGS) $(EXTRA_EXEC_LDFLAGS) -L$(top_builddir)/libdm \
+-	      -o $@ dmsetup.o -ldevmapper $(LIBS)
++	      -o $@ dmsetup.o -ldevmapper -lpthread $(LIBS)
+ 
+ dmsetup.static: dmsetup.o $(interfacebuilddir)/libdevmapper.a
+ 	$(CC) $(CFLAGS) $(LDFLAGS) -static -L$(interfacebuilddir) \
+-	      -o $@ dmsetup.o -ldevmapper $(STATIC_LIBS) $(LIBS)
++	      -o $@ dmsetup.o -ldevmapper -lpthread $(STATIC_LIBS) $(LIBS)
+ 
+ all: device-mapper
+ 
