@@ -7,27 +7,30 @@
 
 echo "deb-src http://deb.debian.org/debian jessie main" >> /etc/apt/sources.list
 apt-get update && apt-get install -y wget btrfs-tools git libncurses-dev bison flex libc6-dev-i386
-echo "export GOARCH=arm" >>  ~/.profile 
-echo "export CGO_ENABLED=1" >>  ~/.profile 
-echo "export GOOS=linux" >>  ~/.profile 
-echo "export CC=arm-linux-gnueabihf-gcc" >>  ~/.profile 
-echo "export DOCKER_GITCOMMIT=89658be" >>  ~/.profile 
-echo "export HOMEDIR=/opt/" >>  ~/.profile 
-echo "export ARM_GNU=${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/" >>  ~/.profile 
-echo "export PATH=${PATH}:${ARM_GNU}/bin/" >>  ~/.profile 
+cat >> ~/.profile << EOF
+export GOARCH=arm" 
+export CGO_ENABLED=1" 
+export GOOS=linux" 
+export CC=arm-linux-gnueabihf-gcc" 
+export DOCKER_GITCOMMIT=89658be" 
+export HOMEDIR=/opt/" 
+export ARM_GNU=${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/" 
+export PATH=${PATH}:${ARM_GNU}/bin/" 
 #添加交叉编译库头文件及so的位置
 
 #gcc找到头文件的路径
-echo "export C_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/include/:${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/sysroot/usr/include/:/usr/include/" >>  ~/.profile 
+export C_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/include/:${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/sysroot/usr/include/:/usr/include/" 
 
 #g++找到头文件的路径
-echo "export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/include/:${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/sysroot/usr/include/:/usr/include/" >>  ~/.profile 
+export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/include/:${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/sysroot/usr/include/:/usr/include/" 
 
 #找到动态链接库的路径
-echo "export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/lib/:/usr/lib/:/usr/local/lib/" >>  ~/.profile 
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/lib/:/usr/lib/:/usr/local/lib/" 
 
 #找到静态库的路径
-echo "export LIBRARY_PATH=${LIBRARY_PATH}:/lib/:/usr/lib/:/usr/local/lib/" >>  ~/.profile 
+export LIBRARY_PATH=${LIBRARY_PATH}:/lib/:/usr/lib/:/usr/local/lib/" 
+
+EOF
 
 #使配置文件生效
 source  ~/.profile 
