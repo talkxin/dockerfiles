@@ -7,14 +7,14 @@
 
 echo "deb-src http://deb.debian.org/debian jessie main" >> /etc/apt/sources.list
 apt-get update && apt-get install -y wget btrfs-tools git libncurses-dev bison flex libc6-dev-i386
-echo "GOARCH=arm" >> /etc/profile
-echo "CGO_ENABLED=1" >> /etc/profile
-echo "GOOS=linux" >> /etc/profile
-echo "CC=arm-linux-gnueabihf-gcc" >> /etc/profile
-echo "DOCKER_GITCOMMIT=89658be" >> /etc/profile
-echo "HOMEDIR=/opt/" >> /etc/profile
-echo "ARM_GNU=${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/" >> /etc/profile
-echo "PATH=${PATH}:${ARM_GNU}/bin/" >> /etc/profile
+echo "export GOARCH=arm" >> /etc/profile
+echo "export CGO_ENABLED=1" >> /etc/profile
+echo "export GOOS=linux" >> /etc/profile
+echo "export CC=arm-linux-gnueabihf-gcc" >> /etc/profile
+echo "export DOCKER_GITCOMMIT=89658be" >> /etc/profile
+echo "export HOMEDIR=/opt/" >> /etc/profile
+echo "export ARM_GNU=${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/" >> /etc/profile
+echo "export PATH=${PATH}:${ARM_GNU}/bin/" >> /etc/profile
 #添加交叉编译库头文件及so的位置
 
 #gcc找到头文件的路径
