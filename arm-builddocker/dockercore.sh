@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 
 #docker pull dockercore/docker:17.05
