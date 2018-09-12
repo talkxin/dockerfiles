@@ -9,30 +9,30 @@
 
 echo "deb-src http://deb.debian.org/debian jessie main" >> /etc/apt/sources.list
 apt-get update && apt-get install -y wget btrfs-tools git libncurses-dev bison flex libc6-dev-i386
-HOMEDIR=/opt/
-ARM_GNU=${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/
-cat >> ~/.profile << EOF
-export GOARCH=arm
-export CGO_ENABLED=1
-export GOOS=linux
-export CC=arm-linux-gnueabihf-gcc
-export DOCKER_GITCOMMIT=89658be
-export PATH=${PATH}:${ARM_GNU}/bin/
-#添加交叉编译库头文件及so的位置
+# HOMEDIR=/opt/
+# ARM_GNU=${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/
+# cat >> ~/.profile << EOF
+# export GOARCH=arm
+# export CGO_ENABLED=1
+# export GOOS=linux
+# export CC=arm-linux-gnueabihf-gcc
+# export DOCKER_GITCOMMIT=89658be
+# export PATH=${PATH}:${ARM_GNU}/bin/
+# #添加交叉编译库头文件及so的位置
 
-#gcc找到头文件的路径
-export C_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/include/:${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/sysroot/usr/include/:/usr/include/
+# #gcc找到头文件的路径
+# export C_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/include/:${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/sysroot/usr/include/:/usr/include/
 
-#g++找到头文件的路径
-export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/include/:${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/sysroot/usr/include/:/usr/include/
+# #g++找到头文件的路径
+# export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/include/:${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/arm-linux-gnueabihf/sysroot/usr/include/:/usr/include/
 
-#找到动态链接库的路径
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/lib/:/usr/lib/:/usr/local/lib/
+# #找到动态链接库的路径
+# export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/lib/:/usr/lib/:/usr/local/lib/
 
-#找到静态库的路径
-export LIBRARY_PATH=${LIBRARY_PATH}:/lib/:/usr/lib/:/usr/local/lib/
+# #找到静态库的路径
+# export LIBRARY_PATH=${LIBRARY_PATH}:/lib/:/usr/lib/:/usr/local/lib/
 
-EOF
+# EOF
 
 #使配置文件生效
 source  ~/.profile 
