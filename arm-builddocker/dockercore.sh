@@ -4,6 +4,7 @@
 #docker pull dockercore/docker:17.05
 
 #docker run --rm -i --privileged -e BUILDFLAGS -e KEEPBUNDLE -e DOCKER_BUILD_GOGC -e DOCKER_BUILD_PKGS -e DOCKER_CLIENTONLY -e DOCKER_DEBUG -e DOCKER_EXPERIMENTAL -e DOCKER_GITCOMMIT -e DOCKER_GRAPHDRIVER=devicemapper -e DOCKER_INCREMENTAL_BINARY -e DOCKER_REMAP_ROOT -e DOCKER_STORAGE_OPTS -e DOCKER_USERLANDPROXY -e TESTDIRS -e TESTFLAGS -e TIMEOUT -v "/Users/liuxin/Documents/docker/bundles:/go/src/github.com/docker/docker/bundles" -t "dockercore/docker:17.05" bash
+# hack/make.sh binary
 
 echo "deb-src http://deb.debian.org/debian jessie main" >> /etc/apt/sources.list
 apt-get update && apt-get install -y wget btrfs-tools git libncurses-dev bison flex libc6-dev-i386
@@ -64,5 +65,3 @@ cd apparmor-2.9.0/libraries/libapparmor/
 ./configure --host=arm-linux --prefix=${ARM_GNU}/arm-linux-gnueabihf/
 make && make install
 cd ${HOMEDIR}/armbuild/
-
-# hack/make.sh binary
