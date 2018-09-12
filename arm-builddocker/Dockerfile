@@ -8,4 +8,7 @@ ADD dockercore.sh /opt/armbuild/dockercore.sh
 
 ADD lvm2.patch /opt/armbuild/lvm2.patch
 
+#将默认的dash改为bash
+RUN dpkg-reconfigure dash
+
 RUN chmod 777 /opt/dockercore.sh && /opt/armbuild/dockercore.sh
