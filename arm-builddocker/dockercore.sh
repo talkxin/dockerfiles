@@ -35,7 +35,7 @@ apt-get update && apt-get install -y wget btrfs-tools git libncurses-dev bison f
 # EOF
 
 #使配置文件生效
-source  ~/.profile 
+# source  ~/.profile 
 
 #设置编译文件夹
 mkdir -p ${HOMEDIR}/armbuild/
