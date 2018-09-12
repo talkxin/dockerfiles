@@ -10,5 +10,5 @@ RUN ln -fs /bin/bash /bin/sh
 
 RUN chmod 777 /opt/armbuild/dockercore.sh && /opt/armbuild/dockercore.sh
 
-CMD ["source ~/.profile"]
+CMD source ~/.profile && /bin/bash
 
