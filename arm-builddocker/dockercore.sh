@@ -48,7 +48,7 @@ git clone https://github.com/raspberrypi/tools.git
 wget https://github.com/seccomp/libseccomp/releases/download/v2.2.3/libseccomp-2.2.3.tar.gz
 tar zxvf libseccomp-2.2.3.tar.gz
 cd libseccomp-2.2.3
-./configure --host=arm-linux --prefix=${ARM_GNU}/arm-linux-gnueabihf/
+./configure --host=arm-linux
 make && make install
 cd ${HOMEDIR}/armbuild/
 
