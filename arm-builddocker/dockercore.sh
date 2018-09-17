@@ -10,9 +10,10 @@
 
 echo "deb-src http://deb.debian.org/debian jessie main" >> /etc/apt/sources.list
 apt-get update && apt-get install -y wget btrfs-tools git libncurses-dev bison flex libc6-dev-i386 gperf gettext libglib2.0-dev libxml-tokeparser-perl libffi-dev
-ARM_GNU=/opt/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/
-CCHOST=arm-linux-gnueabihf
+HOMEDIR=/opt/
+ARM_GNU=${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/
 cat >> ~/.profile << EOF
+export CCHOST=arm-linux-gnueabihf
 export GOARCH=arm
 export CGO_ENABLED=1
 export GOOS=linux
@@ -36,8 +37,7 @@ export LIBRARY_PATH=${LIBRARY_PATH}:/lib/:/usr/lib/:/usr/local/lib/:${ARM_GNU}/a
 EOF
 
 cat >> ~/.profile << EOF
-export ARM_GNU=/opt/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/
-export CCHOST=arm-linux-gnueabihf
+export ARM_GNU=${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/
 EOF
 
 #使配置文件生效
