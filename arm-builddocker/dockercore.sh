@@ -11,8 +11,7 @@
 echo "deb-src http://deb.debian.org/debian jessie main" >> /etc/apt/sources.list
 apt-get update && apt-get install -y wget btrfs-tools git libncurses-dev bison flex libc6-dev-i386 gperf gettext libglib2.0-dev libxml-tokeparser-perl libffi-dev
 cat >> ~/.profile << EOF
-export HOMEDIR=/opt/
-export ARM_GNU=${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/
+export ARM_GNU=/opt/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/
 export CCHOST=arm-linux-gnueabihf
 export GOARCH=arm
 export CGO_ENABLED=1
