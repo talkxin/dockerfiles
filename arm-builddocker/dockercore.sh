@@ -20,6 +20,8 @@ export GOOS=linux
 export CC=arm-linux-gnueabihf-gcc
 export DOCKER_GITCOMMIT=89658be
 export PATH=${PATH}:${ARM_GNU}/bin/:/usr/bin/
+export HOMEDIR=/opt/
+export ARM_GNU=${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/
 #添加交叉编译库头文件及so的位置
 
 #gcc找到头文件的路径
@@ -34,10 +36,6 @@ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/lib/:/usr/lib/:/usr/local/lib/:${ARM_
 #找到静态库的路径
 export LIBRARY_PATH=${LIBRARY_PATH}:/lib/:/usr/lib/:/usr/local/lib/:${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/
 
-EOF
-
-cat >> ~/.profile << EOF
-export ARM_GNU=${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/
 EOF
 
 #使配置文件生效
@@ -108,12 +106,12 @@ cd ${HOMEDIR}/armbuild/
 apt-get source libtinfo-dev
 cd ncurses-5.9+20140913/
 ./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/ --without-cxx --without-cxx-binding --without-ada --without-manpages --without-progs --without-tests --with-shared
-C_INCLUDE_PATH=/usr/include/ make && make install
+make && make install
 ln -s ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libncurses.so.5 ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libtinfo.so.5
 ln -s ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libtinfo.so.5 ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libtinfo.so
 make clean
 ./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/ --without-cxx --without-cxx-binding --without-ada --without-manpages --without-progs --without-tests --with-shared --enable-widec
-C_INCLUDE_PATH=/usr/include/ make && make install
+make && make install
 cd ${HOMEDIR}/armbuild/
 
 #交叉编译 util-linux
@@ -148,7 +146,7 @@ cd ${HOMEDIR}/armbuild/
 #交叉编译 zlib
 apt-get source zlib
 cd zlib-1.2.8.dfsg/
-./configure
+./configure --host=${CCHOST}
 make && make install
 cd ${HOMEDIR}/armbuild/
 
