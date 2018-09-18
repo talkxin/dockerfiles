@@ -104,32 +104,23 @@ cd intltool-0.40.0
 make && make install
 cd ${HOMEDIR}/armbuild/
 
-#交叉编译 python2.7
-wget http://www.python.org/ftp/python/2.7/Python-2.7.tar.bz2
-tar xvf Python-2.7.tar.bz2
-cd Python-2.7/
-./configure --host=${CCHOST}
-sed -i 'N;938a#define PY_FORMAT_LONG_LONG "ll"' pyconfig.h
-make && make install
-cd ${HOMEDIR}/armbuild/
-
 #交叉编译 libtinfo-dev
 apt-get source libtinfo-dev
 cd ncurses-5.9+20140913/
 ./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/ --without-cxx --without-cxx-binding --without-ada --without-manpages --without-progs --without-tests --with-shared
-make && make install
+C_INCLUDE_PATH=/usr/include/ make && make install
 ln -s ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libncurses.so.5 ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libtinfo.so.5
 ln -s ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libtinfo.so.5 ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libtinfo.so
 make clean
 ./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/ --without-cxx --without-cxx-binding --without-ada --without-manpages --without-progs --without-tests --with-shared --enable-widec
-make && make install
+C_INCLUDE_PATH=/usr/include/ make && make install
 cd ${HOMEDIR}/armbuild/
 
 #交叉编译 util-linux
 wget https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v2.32/util-linux-2.32.tar.gz
 tar zxvf util-linux-2.32.tar.gz
 cd util-linux-2.32/
-./configure --host=${CCHOST} --without-systemd
+./configure --host=${CCHOST} --without-systemd --without-python
 make && make install
 cd ${HOMEDIR}/armbuild/
 
@@ -164,7 +155,12 @@ cd ${HOMEDIR}/armbuild/
 #交叉编译 glib-2.0
 apt-get source libglib2.0-dev
 cd glib2.0-2.42.1/
-./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/
+echo ac_cv_type_long_long=yes>arm-linux.cache
+echo glib_cv_stack_grows=no>>arm-linux.cache
+echo glib_cv_uscore=no>>arm-linux.cache
+echo ac_cv_func_posix_getpwuid_r=yes>>arm-linux.cache
+echo ac_cv_func_posix_getgrgid_r=yes>>arm-linux.cache
+./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/ --cache-file=./arm-linux.cache
 make && make install
 cd ${HOMEDIR}/armbuild/
 
@@ -173,5 +169,6 @@ wget http://www.freedesktop.org/software/systemd/systemd-219.tar.xz
 tar xvf systemd-219.tar.xz
 cd systemd-219
 ./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/
+sed -i 's/#define malloc rpl_malloc/#define rpl_malloc=malloc/g' config.h
 make && make install
 cd ${HOMEDIR}/armbuild/
