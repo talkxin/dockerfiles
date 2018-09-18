@@ -106,12 +106,14 @@ cd ${HOMEDIR}/armbuild/
 apt-get source libtinfo-dev
 cd ncurses-5.9+20140913/
 ./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/ --without-cxx --without-cxx-binding --without-ada --without-manpages --without-progs --without-tests --with-shared
-make && make install
+make C_INCLUDE_PATH=${ARM_GNU}/arm-linux-gnueabihf/sysroot/usr/include/gnu/
+make install
 ln -s ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libncurses.so.5 ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libtinfo.so.5
 ln -s ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libtinfo.so.5 ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libtinfo.so
 make clean
 ./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/ --without-cxx --without-cxx-binding --without-ada --without-manpages --without-progs --without-tests --with-shared --enable-widec
-make && make install
+make C_INCLUDE_PATH=${ARM_GNU}/arm-linux-gnueabihf/sysroot/usr/include/gnu/
+make install
 cd ${HOMEDIR}/armbuild/
 
 #交叉编译 util-linux
