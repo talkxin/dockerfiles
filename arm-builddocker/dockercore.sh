@@ -165,10 +165,10 @@ make && make install
 cd ${HOMEDIR}/armbuild/
 
 #交叉编译 libsystemd-dev
-wget http://www.freedesktop.org/software/systemd/systemd-219.tar.xz
-tar xvf systemd-219.tar.xz
-cd systemd-219
-./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/
-sed -i 's/#define malloc rpl_malloc/#define rpl_malloc=malloc/g' config.h
-make && make install
-cd ${HOMEDIR}/armbuild/
+# wget http://www.freedesktop.org/software/systemd/systemd-219.tar.xz
+# tar xvf systemd-219.tar.xz
+# cd systemd-219
+# ./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/
+# sed -i 's/#define malloc rpl_malloc/#define rpl_malloc=malloc/g' config.h
+# make && make install
+# cd ${HOMEDIR}/armbuild/
