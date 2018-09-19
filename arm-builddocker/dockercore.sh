@@ -121,54 +121,54 @@ wget https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v2.32/util-linux
 tar zxvf util-linux-2.32.tar.gz
 cd util-linux-2.32/
 ./configure --host=${CCHOST} --prefix=${PREFIXDIR} --without-systemd --without-python
-make LDFLAGS="-L/opt/armbuild/libs/ -ltinfo" && make install
+make LDFLAGS="-L${PREFIXDIR}/lib -ltinfo" && make install
 cd ${HOMEDIR}/armbuild/
 
-#交叉编译expat
-apt-get source expat
-cd expat-2.1.0
-./configure --host=${CCHOST} --prefix=${PREFIXDIR}
-make && make install
-cd ${HOMEDIR}/armbuild/
+# #交叉编译expat
+# apt-get source expat
+# cd expat-2.1.0
+# ./configure --host=${CCHOST} --prefix=${PREFIXDIR}
+# make && make install
+# cd ${HOMEDIR}/armbuild/
 
-#交叉编译dbus
-apt-get source libdbus-1-dev
-cd dbus-1.8.22/
-./configure --host=${CCHOST} --prefix=${PREFIXDIR} --disable-systemd --enable-tests=no
-make && make install
-cd ${HOMEDIR}/armbuild/
+# #交叉编译dbus
+# apt-get source libdbus-1-dev
+# cd dbus-1.8.22/
+# ./configure --host=${CCHOST} --prefix=${PREFIXDIR} --disable-systemd --enable-tests=no
+# make && make install
+# cd ${HOMEDIR}/armbuild/
 
-#交叉编译 ffi-有问题
-apt-get source libffi-dev
-cd libffi-3.1/
-./configure --host=${CCHOST} --prefix=${PREFIXDIR}
-make && make install
-cd ${HOMEDIR}/armbuild/
+# #交叉编译 ffi-有问题
+# apt-get source libffi-dev
+# cd libffi-3.1/
+# ./configure --host=${CCHOST} --prefix=${PREFIXDIR}
+# make && make install
+# cd ${HOMEDIR}/armbuild/
 
-#交叉编译 zlib-有问题
-apt-get source zlib
-cd zlib-1.2.8.dfsg/
-./configure --host=${CCHOST} --prefix=${PREFIXDIR}
-make && make install
-cd ${HOMEDIR}/armbuild/
+# #交叉编译 zlib-有问题
+# apt-get source zlib
+# cd zlib-1.2.8.dfsg/
+# ./configure --host=${CCHOST} --prefix=${PREFIXDIR}
+# make && make install
+# cd ${HOMEDIR}/armbuild/
 
-#交叉编译 glib-2.0
-apt-get source libglib2.0-dev
-cd glib2.0-2.42.1/
-echo ac_cv_type_long_long=yes>arm-linux.cache
-echo glib_cv_stack_grows=no>>arm-linux.cache
-echo glib_cv_uscore=no>>arm-linux.cache
-echo ac_cv_func_posix_getpwuid_r=yes>>arm-linux.cache
-echo ac_cv_func_posix_getgrgid_r=yes>>arm-linux.cache
-./configure --host=${CCHOST} --prefix=${PREFIXDIR} --cache-file=./arm-linux.cache
-make && make install
-cd ${HOMEDIR}/armbuild/
+# #交叉编译 glib-2.0
+# apt-get source libglib2.0-dev
+# cd glib2.0-2.42.1/
+# echo ac_cv_type_long_long=yes>arm-linux.cache
+# echo glib_cv_stack_grows=no>>arm-linux.cache
+# echo glib_cv_uscore=no>>arm-linux.cache
+# echo ac_cv_func_posix_getpwuid_r=yes>>arm-linux.cache
+# echo ac_cv_func_posix_getgrgid_r=yes>>arm-linux.cache
+# ./configure --host=${CCHOST} --prefix=${PREFIXDIR} --cache-file=./arm-linux.cache
+# make && make install
+# cd ${HOMEDIR}/armbuild/
 
-#交叉编译 libsystemd-dev
-wget http://www.freedesktop.org/software/systemd/systemd-219.tar.xz
-tar xvf systemd-219.tar.xz
-cd systemd-219
-./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/
-sed -i 's/#define malloc rpl_malloc/#define rpl_malloc=malloc/g' config.h
-make && make install
-cd ${HOMEDIR}/armbuild/
+# #交叉编译 libsystemd-dev
+# wget http://www.freedesktop.org/software/systemd/systemd-219.tar.xz
+# tar xvf systemd-219.tar.xz
+# cd systemd-219
+# ./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/
+# sed -i 's/#define malloc rpl_malloc/#define rpl_malloc=malloc/g' config.h
+# make && make install
+# cd ${HOMEDIR}/armbuild/
