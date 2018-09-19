@@ -12,6 +12,7 @@ echo "deb-src http://deb.debian.org/debian jessie main" >> /etc/apt/sources.list
 apt-get update && apt-get install -y wget btrfs-tools git libncurses-dev bison flex libc6-dev-i386 gperf gettext libglib2.0-dev libxml-tokeparser-perl libffi-dev
 HOMEDIR=/opt/
 ARM_GNU=${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/
+PREFIXDIR=${HOMEDIR}/armbuild/libs/
 cat >> ~/.profile << EOF
 export CCHOST=arm-linux-gnueabihf
 export GOARCH=arm
@@ -86,13 +87,11 @@ cd attr-2.4.47/
 make && make install install-dev install-lib
 cd ${HOMEDIR}/armbuild/
 
-#交叉编译 libcap-dev
+#交叉编译 libcap-dev 关联libattr1
 apt-get source libcap-dev
 cd libcap2-2.24/
 sed -i 's/BUILD_CC := $(CC)/BUILD_CC := gcc/g' Make.Rules
-# ln -fs ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/ld-linux-armhf.so.3 /lib/ld-linux-armhf.so.3
-# ln -fs ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libc.so.6 /lib/libc.so.6
-C_INCLUDE_PATH=/usr/include/ make && make RAISE_SETFCAP=no prefix=${ARM_GNU}/arm-linux-gnueabihf/ install
+C_INCLUDE_PATH=/usr/include/ LDFLAGS="-L${HOMEDIR}/armbuild/libs/lib/ -lattr" make && make RAISE_SETFCAP=no prefix=${ARM_GNU}/arm-linux-gnueabihf/ install
 cd ${HOMEDIR}/armbuild/
 
 #交叉编译 intltool
@@ -109,20 +108,20 @@ cd ncurses-5.9+20140913/
 ./configure --host=${CCHOST} --prefix=${PREFIXDIR} --without-cxx --without-cxx-binding --without-ada --without-manpages --without-progs --without-tests --with-shared
 make C_INCLUDE_PATH=${ARM_GNU}/arm-linux-gnueabihf/sysroot/usr/include/gnu/
 make install
-ln -s ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libncurses.so.5 ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libtinfo.so.5
-ln -s ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libtinfo.so.5 ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libtinfo.so
+ln -s ${PREFIXDIR}/lib/libncurses.so.5 ${PREFIXDIR}/lib/libtinfo.so.5
+ln -s ${PREFIXDIR}/lib/libtinfo.so.5 ${PREFIXDIR}/lib/libtinfo.so
 make clean
 ./configure --host=${CCHOST} --prefix=${PREFIXDIR} --without-cxx --without-cxx-binding --without-ada --without-manpages --without-progs --without-tests --with-shared --enable-widec
 make C_INCLUDE_PATH=${ARM_GNU}/arm-linux-gnueabihf/sysroot/usr/include/gnu/
 make install
 cd ${HOMEDIR}/armbuild/
 
-#交叉编译 util-linux
+#交叉编译 util-linux 关联 libtinfo-dev
 wget https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v2.32/util-linux-2.32.tar.gz
 tar zxvf util-linux-2.32.tar.gz
 cd util-linux-2.32/
 ./configure --host=${CCHOST} --prefix=${PREFIXDIR} --without-systemd --without-python
-make && make install
+make LDFLAGS="-L/opt/armbuild/libs/ -ltinfo" && make install
 cd ${HOMEDIR}/armbuild/
 
 #交叉编译expat
