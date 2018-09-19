@@ -22,19 +22,20 @@ export DOCKER_GITCOMMIT=89658be
 export PATH=${PATH}:${ARM_GNU}/bin/:/usr/bin/
 export HOMEDIR=/opt/
 export ARM_GNU=${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/
+export PREFIXDIR=${HOMEDIR}/armbuild/libs/
 #添加交叉编译库头文件及so的位置
 
 #gcc找到头文件的路径
-export C_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:${ARM_GNU}/arm-linux-gnueabihf/include/:${ARM_GNU}/arm-linux-gnueabihf/sysroot/usr/include/:/usr/include/
+export C_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:${ARM_GNU}/arm-linux-gnueabihf/include/:${ARM_GNU}/arm-linux-gnueabihf/sysroot/usr/include/:/usr/include/:${PREFIXDIR}/include/
 
 #g++找到头文件的路径
-export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:${ARM_GNU}/arm-linux-gnueabihf/include/:${ARM_GNU}/arm-linux-gnueabihf/sysroot/usr/include/:/usr/include/
+export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:${ARM_GNU}/arm-linux-gnueabihf/include/:${ARM_GNU}/arm-linux-gnueabihf/sysroot/usr/include/:/usr/include/:${PREFIXDIR}/include/
 
 #找到动态链接库的路径
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/lib/:/usr/lib/:/usr/local/lib/:${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/lib/:/usr/lib/:/usr/local/lib/:${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/:${PREFIXDIR}/lib/
 
 #找到静态库的路径
-export LIBRARY_PATH=${LIBRARY_PATH}:/lib/:/usr/lib/:/usr/local/lib/:${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/
+export LIBRARY_PATH=${LIBRARY_PATH}:/lib/:/usr/lib/:/usr/local/lib/:${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/:${PREFIXDIR}/lib/
 
 EOF
 
@@ -52,7 +53,7 @@ git clone git://github.com/raspberrypi/tools.git
 wget https://github.com/seccomp/libseccomp/releases/download/v2.2.3/libseccomp-2.2.3.tar.gz
 tar zxvf libseccomp-2.2.3.tar.gz
 cd libseccomp-2.2.3
-./configure --host=${CCHOST}
+./configure --host=${CCHOST} --prefix=${PREFIXDIR}
 make && make install
 cd ${HOMEDIR}/armbuild/
 
@@ -60,28 +61,28 @@ cd ${HOMEDIR}/armbuild/
 apt-get source libdevmapper-dev
 cd lvm2-2.02.111
 patch -p0 < ${HOMEDIR}/armbuild/lvm2.patch
-./configure --host=${CCHOST} --enable-static_link --prefix=${ARM_GNU}/arm-linux-gnueabihf/
+./configure --host=${CCHOST} --prefix=${PREFIXDIR} --enable-static_link 
 make && make install
 cd ${HOMEDIR}/armbuild/
 
 #交叉编译 libapparmor-dev
 apt-get source libapparmor-dev
 cd apparmor-2.9.0/libraries/libapparmor/
-./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/
+./configure --host=${CCHOST} --prefix=${PREFIXDIR}
 make && make install
 cd ${HOMEDIR}/armbuild/
 
 #交叉编译 libltdl-dev
 apt-get source libltdl-dev
 cd libtool-2.4.2/
-./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/
+./configure --host=${CCHOST} --prefix=${PREFIXDIR}
 make && make install
 cd ${HOMEDIR}/armbuild/
 
 #交叉编译 libattr1-dev
 apt-get source libattr1-dev
 cd attr-2.4.47/
-./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/
+./configure --host=${CCHOST} --prefix=${PREFIXDIR}
 make && make install install-dev install-lib
 cd ${HOMEDIR}/armbuild/
 
@@ -98,20 +99,20 @@ cd ${HOMEDIR}/armbuild/
 wget http://ftp.gnome.org/pub/gnome/sources/intltool/0.40/intltool-0.40.0.tar.gz
 tar zxvf intltool-0.40.0.tar.gz
 cd intltool-0.40.0
-./configure --host=${CCHOST}
+./configure --host=${CCHOST} --prefix=${PREFIXDIR}
 make && make install
 cd ${HOMEDIR}/armbuild/
 
 #交叉编译 libtinfo-dev
 apt-get source libtinfo-dev
 cd ncurses-5.9+20140913/
-./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/ --without-cxx --without-cxx-binding --without-ada --without-manpages --without-progs --without-tests --with-shared
+./configure --host=${CCHOST} --prefix=${PREFIXDIR} --without-cxx --without-cxx-binding --without-ada --without-manpages --without-progs --without-tests --with-shared
 make C_INCLUDE_PATH=${ARM_GNU}/arm-linux-gnueabihf/sysroot/usr/include/gnu/
 make install
 ln -s ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libncurses.so.5 ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libtinfo.so.5
 ln -s ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libtinfo.so.5 ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/libtinfo.so
 make clean
-./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/ --without-cxx --without-cxx-binding --without-ada --without-manpages --without-progs --without-tests --with-shared --enable-widec
+./configure --host=${CCHOST} --prefix=${PREFIXDIR} --without-cxx --without-cxx-binding --without-ada --without-manpages --without-progs --without-tests --with-shared --enable-widec
 make C_INCLUDE_PATH=${ARM_GNU}/arm-linux-gnueabihf/sysroot/usr/include/gnu/
 make install
 cd ${HOMEDIR}/armbuild/
@@ -120,35 +121,35 @@ cd ${HOMEDIR}/armbuild/
 wget https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v2.32/util-linux-2.32.tar.gz
 tar zxvf util-linux-2.32.tar.gz
 cd util-linux-2.32/
-./configure --host=${CCHOST} --without-systemd --without-python
+./configure --host=${CCHOST} --prefix=${PREFIXDIR} --without-systemd --without-python
 make && make install
 cd ${HOMEDIR}/armbuild/
 
 #交叉编译expat
 apt-get source expat
 cd expat-2.1.0
-./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/
+./configure --host=${CCHOST} --prefix=${PREFIXDIR}
 make && make install
 cd ${HOMEDIR}/armbuild/
 
 #交叉编译dbus
 apt-get source libdbus-1-dev
 cd dbus-1.8.22/
-./configure --host=${CCHOST} --disable-systemd --enable-tests=no
+./configure --host=${CCHOST} --prefix=${PREFIXDIR} --disable-systemd --enable-tests=no
 make && make install
 cd ${HOMEDIR}/armbuild/
 
-#交叉编译 ffi
+#交叉编译 ffi-有问题
 apt-get source libffi-dev
 cd libffi-3.1/
-./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/
+./configure --host=${CCHOST} --prefix=${PREFIXDIR}
 make && make install
 cd ${HOMEDIR}/armbuild/
 
-#交叉编译 zlib
+#交叉编译 zlib-有问题
 apt-get source zlib
 cd zlib-1.2.8.dfsg/
-./configure --host=${CCHOST}
+./configure --host=${CCHOST} --prefix=${PREFIXDIR}
 make && make install
 cd ${HOMEDIR}/armbuild/
 
@@ -160,15 +161,15 @@ echo glib_cv_stack_grows=no>>arm-linux.cache
 echo glib_cv_uscore=no>>arm-linux.cache
 echo ac_cv_func_posix_getpwuid_r=yes>>arm-linux.cache
 echo ac_cv_func_posix_getgrgid_r=yes>>arm-linux.cache
-./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/ --cache-file=./arm-linux.cache
+./configure --host=${CCHOST} --prefix=${PREFIXDIR} --cache-file=./arm-linux.cache
 make && make install
 cd ${HOMEDIR}/armbuild/
 
 #交叉编译 libsystemd-dev
-# wget http://www.freedesktop.org/software/systemd/systemd-219.tar.xz
-# tar xvf systemd-219.tar.xz
-# cd systemd-219
-# ./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/
-# sed -i 's/#define malloc rpl_malloc/#define rpl_malloc=malloc/g' config.h
-# make && make install
-# cd ${HOMEDIR}/armbuild/
+wget http://www.freedesktop.org/software/systemd/systemd-219.tar.xz
+tar xvf systemd-219.tar.xz
+cd systemd-219
+./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/
+sed -i 's/#define malloc rpl_malloc/#define rpl_malloc=malloc/g' config.h
+make && make install
+cd ${HOMEDIR}/armbuild/
