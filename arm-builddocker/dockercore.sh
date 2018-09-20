@@ -9,7 +9,20 @@
 # hack/make.sh dynbinary
 
 echo "deb-src http://deb.debian.org/debian jessie main" >> /etc/apt/sources.list
-apt-get update && apt-get install -y wget btrfs-tools git libncurses-dev bison flex libc6-dev-i386 gperf gettext libglib2.0-dev libxml-tokeparser-perl libffi-dev
+apt-get update 
+apt-get install -y wget \
+                    btrfs-tools \
+                    git \
+                    libncurses-dev \
+                    bison \
+                    flex \
+                    libc6-dev-i386 \
+                    gperf \
+                    gettext \
+                    libglib2.0-dev \
+                    libxml-tokeparser-perl \
+                    libffi-dev \
+                    libgio2.0-cil-dev
 HOMEDIR=/opt/
 ARM_GNU=${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/
 PREFIXDIR=${HOMEDIR}/armbuild/libs/
@@ -20,7 +33,7 @@ export CGO_ENABLED=1
 export GOOS=linux
 export CC=arm-linux-gnueabihf-gcc
 export DOCKER_GITCOMMIT=89658be
-export PATH=${PATH}:${ARM_GNU}/bin/:/usr/bin/
+export PATH=${PATH}:${ARM_GNU}/bin/:/usr/bin/:${PREFIXDIR}/bin/:${PREFIXDIR}/share/locale/
 export HOMEDIR=/opt/
 export ARM_GNU=${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/
 export PREFIXDIR=${HOMEDIR}/armbuild/libs/
@@ -91,7 +104,8 @@ cd ${HOMEDIR}/armbuild/
 apt-get source libcap-dev
 cd libcap2-2.24/
 sed -i 's/BUILD_CC := $(CC)/BUILD_CC := gcc/g' Make.Rules
-C_INCLUDE_PATH=/usr/include/ LDFLAGS="-L${HOMEDIR}/armbuild/libs/lib/ -lattr" make && make RAISE_SETFCAP=no prefix=${ARM_GNU}/arm-linux-gnueabihf/ install
+C_INCLUDE_PATH=/usr/include/ LDFLAGS="-L${HOMEDIR}/armbuild/libs/lib/ -lattr" make
+make RAISE_SETFCAP=no prefix=${PREFIXDIR} install
 cd ${HOMEDIR}/armbuild/
 
 #交叉编译 intltool
@@ -160,16 +174,24 @@ echo glib_cv_stack_grows=no>>arm-linux.cache
 echo glib_cv_uscore=no>>arm-linux.cache
 echo ac_cv_func_posix_getpwuid_r=yes>>arm-linux.cache
 echo ac_cv_func_posix_getgrgid_r=yes>>arm-linux.cache
-./configure --host=${CCHOST} --prefix=${PREFIXDIR} --cache-file=./arm-linux.cache
-make LDFLAGS="-L${ARM_GNU}/arm-linux-gnueabihf/sysroot/usr/lib -L${PREFIXDIR}/lib"
+./configure \
+LDFLAGS="-L${ARM_GNU}/arm-linux-gnueabihf/sysroot/usr/lib/ -L${PREFIXDIR}/lib -ldl" \
+CFLAGS="-I${PREFIXDIR}/include/ -I${ARM_GNU}/arm-linux-gnueabihf/include/" \
+--host=${CCHOST} --prefix=${PREFIXDIR} --enable-static=yes --cache-file=./arm-linux.cache 
+make
 make install
 cd ${HOMEDIR}/armbuild/
 
-# #交叉编译 libsystemd-dev 关联 intltool 需要 4.0以上
-# wget http://www.freedesktop.org/software/systemd/systemd-219.tar.xz
-# tar xvf systemd-219.tar.xz
-# cd systemd-219
-# ./configure --host=${CCHOST} --prefix=${ARM_GNU}/arm-linux-gnueabihf/ --with-intltool=/opt/armbuild/libs/bin/
-# sed -i 's/#define malloc rpl_malloc/#define rpl_malloc=malloc/g' config.h
-# make && make install
-# cd ${HOMEDIR}/armbuild/
+#交叉编译 libsystemd-dev 关联 【intltool 需要 4.0以上、libattr1、util-linux、libcap】
+wget http://www.freedesktop.org/software/systemd/systemd-219.tar.xz
+tar xvf systemd-219.tar.xz
+cd systemd-219
+./configure \
+PKG_CONFIG_LIBDIR="${PREFIXDIR}/lib/pkgconfig" \
+LDFLAGS="-L${PREFIXDIR}/lib/ -L${PREFIXDIR}/lib64/ -lattr -lcap" \
+CFLAGS="-I${PREFIXDIR}/include/" \
+--host=${CCHOST} \
+--prefix=${PREFIXDIR}
+sed -i 's/#define malloc rpl_malloc/#define rpl_malloc=malloc/g' config.h
+make && make install
+cd ${HOMEDIR}/armbuild/
