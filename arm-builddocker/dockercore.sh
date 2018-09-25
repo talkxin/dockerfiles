@@ -11,8 +11,7 @@
 # hack/make.sh dynbinary
 
 # 支持依赖安装 gcc-arm-linux-gnueabihf
-# 
-echo "deb http://ftp.de.debian.org/debian sid main" >> /etc/apt/sources.list
+# echo "deb http://ftp.de.debian.org/debian sid main" >> /etc/apt/sources.list
 echo "deb-src http://deb.debian.org/debian jessie main" >> /etc/apt/sources.list
 apt-get update 
 apt-get install -y wget \
