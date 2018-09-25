@@ -201,7 +201,7 @@ make && make install
 cd ${HOMEDIR}/armbuild/
 
 #调整lib路径，使ld引入
-mkdir -p ${ARM_GNU}/arm-linux-gnueabihf/bin/../sysroot/usr/local/
+mkdir -p ${ARM_GNU}/arm-linux-gnueabihf/sysroot/usr/local/
 cp -r ${PREFIXDIR}/lib64/* ${PREFIXDIR}/lib/
 ln -s ${PREFIXDIR}/lib/ ${ARM_GNU}arm-linux-gnueabihf/sysroot/usr/local/
 rm -rf /usr/local/lib/libseccomp*
