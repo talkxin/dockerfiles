@@ -3,14 +3,16 @@
 
 #docker pull dockercore/docker:17.05
 
+#docker build -t talkliu/docker-arm:17.05 .
+
 #docker run --rm -i --privileged -e BUILDFLAGS -e KEEPBUNDLE -e DOCKER_BUILD_GOGC -e DOCKER_BUILD_PKGS -e DOCKER_CLIENTONLY -e DOCKER_DEBUG -e DOCKER_EXPERIMENTAL -e DOCKER_GITCOMMIT -e DOCKER_GRAPHDRIVER=devicemapper -e DOCKER_INCREMENTAL_BINARY -e DOCKER_REMAP_ROOT -e DOCKER_STORAGE_OPTS -e DOCKER_USERLANDPROXY -e TESTDIRS -e TESTFLAGS -e TIMEOUT -v "/Users/liuxin/Documents/docker/bundles:/go/src/github.com/docker/docker/bundles" -t "talkliu/docker-arm:17.05"
 
 # hack/make.sh binary
 # hack/make.sh dynbinary
 
 # 支持依赖安装 gcc-arm-linux-gnueabihf
-# echo "deb http://ftp.de.debian.org/debian sid main" >> /etc/apt/sources.list
-
+# 
+echo "deb http://ftp.de.debian.org/debian sid main" >> /etc/apt/sources.list
 echo "deb-src http://deb.debian.org/debian jessie main" >> /etc/apt/sources.list
 apt-get update 
 apt-get install -y wget \
@@ -29,6 +31,7 @@ apt-get install -y wget \
 HOMEDIR=/opt/
 ARM_GNU=${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/
 PREFIXDIR=${HOMEDIR}/armbuild/libs/
+DOCKERFILEDIR=${HOMEDIR}/armbuild/dockerbin/
 cat >> ~/.profile << EOF
 export CCHOST=arm-linux-gnueabihf
 export GOARCH=arm
@@ -40,18 +43,16 @@ export PATH=${PATH}:${ARM_GNU}/bin/:/usr/bin/:${PREFIXDIR}/bin/:${PREFIXDIR}/sha
 export HOMEDIR=/opt/
 export ARM_GNU=${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/
 export PREFIXDIR=${HOMEDIR}/armbuild/libs/
+export DOCKERFILEDIR=${HOMEDIR}/armbuild/dockerbin/
+
 #添加交叉编译库头文件及so的位置
 
-#gcc找到头文件的路径
 export C_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:${ARM_GNU}/arm-linux-gnueabihf/include/:${ARM_GNU}/arm-linux-gnueabihf/sysroot/usr/include/:/usr/include/:${PREFIXDIR}/include/
 
-#g++找到头文件的路径
 export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:${ARM_GNU}/arm-linux-gnueabihf/include/:${ARM_GNU}/arm-linux-gnueabihf/sysroot/usr/include/:/usr/include/:${PREFIXDIR}/include/
 
-#找到动态链接库的路径
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/lib/:/usr/lib/:/usr/local/lib/:${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/:${PREFIXDIR}/lib/
 
-#找到静态库的路径
 export LIBRARY_PATH=${LIBRARY_PATH}:/lib/:/usr/lib/:/usr/local/lib/:${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/:${PREFIXDIR}/lib/
 
 EOF
@@ -205,3 +206,18 @@ cp -r ${PREFIXDIR}/lib64/* ${PREFIXDIR}/lib/
 ln -s ${PREFIXDIR}/lib/ ${ARM_GNU}arm-linux-gnueabihf/sysroot/usr/local/
 rm -rf /usr/local/lib/libseccomp*
 cp ${PREFIXDIR}/lib/libseccomp* /usr/local/lib/
+
+#编译docker运行可执行文件
+#【 docker-containerd docker-containerd-ctr docker-containerd-shim docker-init docker-proxy docker-runc 】
+
+mkdir ${DOCKERFILEDIR}
+cd ${DOCKERFILEDIR}
+
+#编译 docker-containerd
+git clone git://github.com/docker/containerd.git
+cd containerd
+cd ${DOCKERFILEDIR}
+
+git clone git://github.com:opencontainers/runc.git
+git runc
+cd ${DOCKERFILEDIR}
