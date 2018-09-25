@@ -217,6 +217,6 @@ git clone git://github.com/docker/containerd.git
 cd containerd
 cd ${DOCKERFILEDIR}
 
-git clone git://github.com:opencontainers/runc.git
+git clone git://github.com/opencontainers/runc.git
 cd runc
 cd ${DOCKERFILEDIR}
