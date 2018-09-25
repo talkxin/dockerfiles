@@ -218,5 +218,5 @@ cd containerd
 cd ${DOCKERFILEDIR}
 
 git clone git://github.com:opencontainers/runc.git
-git runc
+cd runc
 cd ${DOCKERFILEDIR}
