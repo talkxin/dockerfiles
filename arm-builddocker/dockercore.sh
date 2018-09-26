@@ -202,8 +202,10 @@ cd ${HOMEDIR}/armbuild/
 #交叉编译 btrfs-dev
 
 #安装最新golang
-# wget https://dl.google.com/go/go1.11.linux-amd64.tar.gz
-# tar zxvf go1.11.linux-amd64.tar.gz
+wget https://dl.google.com/go/go1.11.linux-amd64.tar.gz
+tar zxvf go1.11.linux-amd64.tar.gz
+rm -rf /usr/local/go/
+mv go/ /usr/local/go/
 
 
 #交叉编译 protobuf
