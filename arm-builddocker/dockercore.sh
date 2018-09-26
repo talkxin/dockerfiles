@@ -202,11 +202,11 @@ cd ${HOMEDIR}/armbuild/
 #交叉编译 btrfs-dev
 
 #安装最新golang【安装最新版 docker-containerd 时需要最少go-1.8以上支持】
-wget https://dl.google.com/go/go1.11.linux-amd64.tar.gz
-tar zxvf go1.11.linux-amd64.tar.gz
-rm -rf /usr/local/go/
-mv go/ /usr/local/go/
-cd ${HOMEDIR}/armbuild/
+# wget https://dl.google.com/go/go1.11.linux-amd64.tar.gz
+# tar zxvf go1.11.linux-amd64.tar.gz
+# rm -rf /usr/local/go/
+# mv go/ /usr/local/go/
+# cd ${HOMEDIR}/armbuild/
 
 #交叉编译 protobuf
 # wget https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protobuf-all-3.6.1.tar.gz
@@ -230,13 +230,14 @@ DOCKERFILEDIR=/go/src/github.com/
 # cd ${DOCKERFILEDIR}
 # go get github.com/docker/containerd
 # cd ${DOCKERFILEDIR}/docker/containerd
-
+# git checkout v0.2.3
 # cd ${DOCKERFILEDIR}
 
 #编译 docker-runc 【需要 libseccomp-2.3.3 支持】
 cd ${DOCKERFILEDIR}
 go get github.com/opencontainers/runc
 cd ${DOCKERFILEDIR}/opencontainers/runc
+git checkout v1.0.0-rc2
 make
 make install
 rm /usr/local/bin/docker-runc
