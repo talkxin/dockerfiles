@@ -30,7 +30,7 @@ apt-get install -y wget \
 HOMEDIR=/opt/
 ARM_GNU=${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/
 PREFIXDIR=${HOMEDIR}/armbuild/libs/
-DOCKERFILEDIR=${HOMEDIR}/armbuild/dockerbin/
+DOCKERFILEDIR=/go/src/github.com/
 cat >> ~/.profile << EOF
 export CCHOST=arm-linux-gnueabihf
 export GOARCH=arm
@@ -67,9 +67,9 @@ cd ${HOMEDIR}/armbuild/
 git clone git://github.com/raspberrypi/tools.git
 
 #交叉编译 libseccomp-dev
-wget https://github.com/seccomp/libseccomp/releases/download/v2.2.3/libseccomp-2.2.3.tar.gz
-tar zxvf libseccomp-2.2.3.tar.gz
-cd libseccomp-2.2.3
+wget https://github.com/seccomp/libseccomp/releases/download/v2.3.3/libseccomp-2.3.3.tar.gz
+tar zxvf libseccomp-2.3.3.tar.gz
+cd libseccomp-2.3.3
 ./configure --host=${CCHOST} --prefix=${PREFIXDIR}
 make && make install
 cd ${HOMEDIR}/armbuild/
@@ -199,6 +199,19 @@ sed -i 's/#define malloc rpl_malloc/#define rpl_malloc=malloc/g' config.h
 make && make install
 cd ${HOMEDIR}/armbuild/
 
+#交叉编译 btrfs-dev
+
+#安装最新golang
+# wget https://dl.google.com/go/go1.11.linux-amd64.tar.gz
+# tar zxvf go1.11.linux-amd64.tar.gz
+
+
+#交叉编译 protobuf
+# wget https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protobuf-all-3.6.1.tar.gz
+# tar zxvf protobuf-all-3.6.1.tar.gz
+# cd protobuf-3.6.1/
+
+
 #调整lib路径，使ld引入
 mkdir -p ${ARM_GNU}/arm-linux-gnueabihf/sysroot/usr/local/
 cp -r ${PREFIXDIR}/lib64/* ${PREFIXDIR}/lib/
@@ -209,14 +222,21 @@ cp ${PREFIXDIR}/lib/libseccomp* /usr/local/lib/
 #编译docker运行可执行文件
 #【 docker-containerd docker-containerd-ctr docker-containerd-shim docker-init docker-proxy docker-runc 】
 
-mkdir ${DOCKERFILEDIR}
-cd ${DOCKERFILEDIR}
+DOCKERFILEDIR=/go/src/github.com/
 
-#编译 docker-containerd
-git clone git://github.com/docker/containerd.git
-cd containerd
-cd ${DOCKERFILEDIR}
+#编译 docker-containerd 【关联 btrfs、protobuf】
+# cd ${DOCKERFILEDIR}
+# go get github.com/docker/containerd
+# cd ${DOCKERFILEDIR}/docker/containerd
 
-git clone git://github.com/opencontainers/runc.git
-cd runc
+# cd ${DOCKERFILEDIR}
+
+#编译 docker-runc 【需要 libseccomp-2.3.3 支持】
+cd ${DOCKERFILEDIR}
+go get github.com/opencontainers/runc
+cd ${DOCKERFILEDIR}/opencontainers/runc
+make
+make install
+rm /usr/local/bin/docker-runc
+cp /usr/local/sbin/runc /usr/local/bin/docker-runc
 cd ${DOCKERFILEDIR}
