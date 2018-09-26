@@ -201,12 +201,12 @@ cd ${HOMEDIR}/armbuild/
 
 #交叉编译 btrfs-dev
 
-#安装最新golang
+#安装最新golang【安装最新版 docker-containerd 时需要最少go-1.8以上支持】
 wget https://dl.google.com/go/go1.11.linux-amd64.tar.gz
 tar zxvf go1.11.linux-amd64.tar.gz
 rm -rf /usr/local/go/
 mv go/ /usr/local/go/
-
+cd ${HOMEDIR}/armbuild/
 
 #交叉编译 protobuf
 # wget https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protobuf-all-3.6.1.tar.gz
