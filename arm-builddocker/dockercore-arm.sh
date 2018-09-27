@@ -59,6 +59,9 @@ EOF
 #使配置文件生效
 source  ~/.profile 
 
+#修改 make.sh 编译文件
+patch -p0 < /opt/armbuild/make.sh.patch
+
 #设置编译文件夹
 mkdir -p ${HOMEDIR}/armbuild/
 cd ${HOMEDIR}/armbuild/
