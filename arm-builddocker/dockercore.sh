@@ -217,10 +217,7 @@ cp ${PREFIXDIR}/lib/libseccomp* /usr/local/lib/
 #【 docker-containerd docker-containerd-ctr docker-containerd-shim docker-runc docker-init docker-proxy 】
 
 rm -rf /usr/local/bin/docker-*
-sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh runc
-sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh tini
-sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh proxy
-sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh containerd
+sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh runc tini proxy containerd
 
 # sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh tomlv
 # sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh vndr
