@@ -199,20 +199,12 @@ sed -i 's/#define malloc rpl_malloc/#define rpl_malloc=malloc/g' config.h
 make && make install
 cd ${HOMEDIR}/armbuild/
 
-#交叉编译 btrfs-dev
-
-#安装最新golang【安装最新版 docker-containerd 时需要最少go-1.8以上支持】
+#安装最新golang【安装最新版 docker-containerd 时需要最少go-1.8以上支持 当前版本不需要安装】
 # wget https://dl.google.com/go/go1.11.linux-amd64.tar.gz
 # tar zxvf go1.11.linux-amd64.tar.gz
 # rm -rf /usr/local/go/
 # mv go/ /usr/local/go/
 # cd ${HOMEDIR}/armbuild/
-
-#交叉编译 protobuf
-# wget https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protobuf-all-3.6.1.tar.gz
-# tar zxvf protobuf-all-3.6.1.tar.gz
-# cd protobuf-3.6.1/
-
 
 #调整lib路径，使ld引入
 mkdir -p ${ARM_GNU}/arm-linux-gnueabihf/sysroot/usr/local/
@@ -226,12 +218,17 @@ cp ${PREFIXDIR}/lib/libseccomp* /usr/local/lib/
 
 DOCKERFILEDIR=/go/src/github.com/
 
-#编译 docker-containerd 【关联 btrfs、protobuf】
-# cd ${DOCKERFILEDIR}
-# go get github.com/docker/containerd
-# cd ${DOCKERFILEDIR}/docker/containerd
-# git checkout v0.2.3
-# cd ${DOCKERFILEDIR}
+#编译 docker-containerd 【关联 protobuf】
+cd ${DOCKERFILEDIR}
+go get github.com/docker/containerd
+cd ${DOCKERFILEDIR}/docker/containerd
+git checkout v0.2.3
+make
+make install
+rm -rf /usr/local/bin/docker-containerd*
+mv /usr/local/bin/containerd /usr/local/bin/docker-containerd
+mv /usr/local/bin/containerd-shim /usr/local/bin/docker-containerd-shim
+cd ${DOCKERFILEDIR}
 
 #编译 docker-runc 【需要 libseccomp-2.3.3 支持】
 cd ${DOCKERFILEDIR}
