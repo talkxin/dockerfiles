@@ -253,5 +253,5 @@ mv /usr/local/bin/tini /usr/local/bin/docker-init
 #编译 docker-proxy
 cd ${DOCKERFILEDIR}
 git clone git://github.com/docker/libnetwork.git
-cd libnetwork/libnetwork/cmd/proxy/
+cd libnetwork/cmd/proxy/
 go build -ldflags="$PROXY_LDFLAGS" -o /usr/local/bin/docker-proxy
