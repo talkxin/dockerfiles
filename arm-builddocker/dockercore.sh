@@ -42,7 +42,7 @@ export PATH=${PATH}:${ARM_GNU}/bin/:/usr/bin/:${PREFIXDIR}/bin/:${PREFIXDIR}/sha
 export HOMEDIR=/opt/
 export ARM_GNU=${HOMEDIR}/armbuild/tools/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/
 export PREFIXDIR=${HOMEDIR}/armbuild/libs/
-export DOCKERFILEDIR=${HOMEDIR}/armbuild/dockerbin/
+export DOCKERFILEDIR=/go/src/github.com/
 
 #添加交叉编译库头文件及so的位置
 
