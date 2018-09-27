@@ -67,59 +67,60 @@ cd ${HOMEDIR}/armbuild/
 git clone git://github.com/raspberrypi/tools.git
 
 #交叉编译 libseccomp-dev
+cd ${HOMEDIR}/armbuild/
 wget https://github.com/seccomp/libseccomp/releases/download/v2.3.3/libseccomp-2.3.3.tar.gz
 tar zxvf libseccomp-2.3.3.tar.gz
 cd libseccomp-2.3.3
 ./configure --host=${CCHOST} --prefix=${PREFIXDIR}
 make && make install
-cd ${HOMEDIR}/armbuild/
 
 #交叉编译 libdevmapper-dev
+cd ${HOMEDIR}/armbuild/
 apt-get source libdevmapper-dev
 cd lvm2-2.02.111
 patch -p0 < ${HOMEDIR}/armbuild/lvm2.patch
 ./configure --host=${CCHOST} --prefix=${PREFIXDIR} --enable-static_link 
 make && make install
-cd ${HOMEDIR}/armbuild/
 
 #交叉编译 libapparmor-dev
+cd ${HOMEDIR}/armbuild/
 apt-get source libapparmor-dev
 cd apparmor-2.9.0/libraries/libapparmor/
 ./configure --host=${CCHOST} --prefix=${PREFIXDIR}
 make && make install
-cd ${HOMEDIR}/armbuild/
 
 #交叉编译 libltdl-dev
+cd ${HOMEDIR}/armbuild/
 apt-get source libltdl-dev
 cd libtool-2.4.2/
 ./configure --host=${CCHOST} --prefix=${PREFIXDIR}
 make && make install
-cd ${HOMEDIR}/armbuild/
 
 #交叉编译 libattr1-dev
+cd ${HOMEDIR}/armbuild/
 apt-get source libattr1-dev
 cd attr-2.4.47/
 ./configure --host=${CCHOST} --prefix=${PREFIXDIR}
 make && make install install-dev install-lib
-cd ${HOMEDIR}/armbuild/
 
 #交叉编译 libcap-dev 关联libattr1
+cd ${HOMEDIR}/armbuild/
 apt-get source libcap-dev
 cd libcap2-2.24/
 sed -i 's/BUILD_CC := $(CC)/BUILD_CC := gcc/g' Make.Rules
 C_INCLUDE_PATH=/usr/include/ LDFLAGS="-L${HOMEDIR}/armbuild/libs/lib/ -lattr" make
 make RAISE_SETFCAP=no prefix=${PREFIXDIR} install
-cd ${HOMEDIR}/armbuild/
 
 #交叉编译 intltool
+cd ${HOMEDIR}/armbuild/
 wget http://ftp.gnome.org/pub/gnome/sources/intltool/0.40/intltool-0.40.0.tar.gz
 tar zxvf intltool-0.40.0.tar.gz
 cd intltool-0.40.0
 ./configure --host=${CCHOST} --prefix=${PREFIXDIR}
 make && make install
-cd ${HOMEDIR}/armbuild/
 
 #交叉编译 libtinfo-dev
+cd ${HOMEDIR}/armbuild/
 apt-get source libtinfo-dev
 cd ncurses-5.9+20140913/
 ./configure --host=${CCHOST} --prefix=${PREFIXDIR} --without-cxx --without-cxx-binding --without-ada --without-manpages --without-progs --without-tests --with-shared
@@ -131,43 +132,42 @@ make clean
 ./configure --host=${CCHOST} --prefix=${PREFIXDIR} --without-cxx --without-cxx-binding --without-ada --without-manpages --without-progs --without-tests --with-shared --enable-widec
 make C_INCLUDE_PATH=${ARM_GNU}/arm-linux-gnueabihf/sysroot/usr/include/gnu/
 make install
-cd ${HOMEDIR}/armbuild/
 
 #交叉编译 util-linux 关联 libtinfo-dev
+cd ${HOMEDIR}/armbuild/
 wget https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v2.32/util-linux-2.32.tar.gz
 tar zxvf util-linux-2.32.tar.gz
 cd util-linux-2.32/
 ./configure --host=${CCHOST} --prefix=${PREFIXDIR} --without-systemd --without-python
 make LDFLAGS="-L${PREFIXDIR}/lib -ltinfo" && make install
-cd ${HOMEDIR}/armbuild/
 
 #交叉编译expat
+cd ${HOMEDIR}/armbuild/
 apt-get source expat
 cd expat-2.1.0
 ./configure --host=${CCHOST} --prefix=${PREFIXDIR}
 make && make install
-cd ${HOMEDIR}/armbuild/
 
 #交叉编译dbus
+cd ${HOMEDIR}/armbuild/
 apt-get source libdbus-1-dev
 cd dbus-1.8.22/
 ./configure LDFLAGS="-L${PREFIXDIR}/lib -lexpat" --host=${CCHOST} --prefix=${PREFIXDIR} --disable-systemd --enable-tests=no
 make && make install
-cd ${HOMEDIR}/armbuild/
 
-#交叉编译 ffi-有问题
+#交叉编译 ffi
+cd ${HOMEDIR}/armbuild/
 apt-get source libffi-dev
 cd libffi-3.1/
 ./configure --host=${CCHOST} --prefix=${PREFIXDIR}
 make && make install
-cd ${HOMEDIR}/armbuild/
 
-#交叉编译 zlib-有问题
+#交叉编译 zlib
+cd ${HOMEDIR}/armbuild/
 apt-get source zlib
 cd zlib-1.2.8.dfsg/
 ./configure --prefix=${PREFIXDIR}
 make && make install
-cd ${HOMEDIR}/armbuild/
 
 #交叉编译 glib-2.0
 apt-get source libglib2.0-dev
@@ -214,17 +214,19 @@ rm -rf /usr/local/lib/libseccomp*
 cp ${PREFIXDIR}/lib/libseccomp* /usr/local/lib/
 
 #编译docker运行可执行文件
-#【 docker-containerd docker-containerd-ctr docker-containerd-shim docker-init docker-proxy docker-runc 】
+#【 docker-containerd docker-containerd-ctr docker-containerd-shim docker-runc docker-init docker-proxy 】
 
 #编译 docker-containerd 【关联 protobuf 】
 cd ${DOCKERFILEDIR}
-go get github.com/docker/containerd
+git clone git://github.com/docker/containerd.git
+mv containerd/ docker/containerd/
 cd ${DOCKERFILEDIR}/docker/containerd
 git checkout v0.2.3
 make
 make install
 rm -rf /usr/local/bin/docker-containerd*
 mv /usr/local/bin/containerd /usr/local/bin/docker-containerd
+mv /usr/local/bin/ctr /usr/local/bin/docker-containerd-ctr
 mv /usr/local/bin/containerd-shim /usr/local/bin/docker-containerd-shim
 cd ${DOCKERFILEDIR}
 
@@ -238,3 +240,20 @@ make install
 rm /usr/local/bin/docker-runc
 cp /usr/local/sbin/runc /usr/local/bin/docker-runc
 cd ${DOCKERFILEDIR}
+
+#编译 docker-init
+cd ${DOCKERFILEDIR}
+git clone git://github.com/krallin/tini.git
+cd tini
+git checkout v0.13.0
+cmake .
+make && make install
+ln -s ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/ld-linux-armhf.so.3 /lib/ld-linux-armhf.so.3
+rm /usr/local/bin/docker-init
+mv /usr/local/bin/tini /usr/local/bin/docker-init
+
+#编译 docker-proxy
+cd ${DOCKERFILEDIR}
+git clone git://github.com/docker/libnetwork.git
+cd libnetwork/libnetwork/cmd/proxy/
+go build -ldflags="$PROXY_LDFLAGS" -o /usr/local/bin/docker-proxy
