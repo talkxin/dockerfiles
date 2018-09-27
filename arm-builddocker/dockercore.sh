@@ -228,7 +228,6 @@ rm -rf /usr/local/bin/docker-containerd*
 mv /usr/local/bin/containerd /usr/local/bin/docker-containerd
 mv /usr/local/bin/ctr /usr/local/bin/docker-containerd-ctr
 mv /usr/local/bin/containerd-shim /usr/local/bin/docker-containerd-shim
-cd ${DOCKERFILEDIR}
 
 #编译 docker-runc 【需要 libseccomp-2.3.3 支持】
 cd ${DOCKERFILEDIR}
@@ -239,7 +238,6 @@ make
 make install
 rm /usr/local/bin/docker-runc
 cp /usr/local/sbin/runc /usr/local/bin/docker-runc
-cd ${DOCKERFILEDIR}
 
 #编译 docker-init
 cd ${DOCKERFILEDIR}
