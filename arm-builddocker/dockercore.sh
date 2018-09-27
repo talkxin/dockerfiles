@@ -216,42 +216,54 @@ cp ${PREFIXDIR}/lib/libseccomp* /usr/local/lib/
 #编译docker运行可执行文件
 #【 docker-containerd docker-containerd-ctr docker-containerd-shim docker-runc docker-init docker-proxy 】
 
-#编译 docker-containerd 【关联 protobuf 】
-cd ${DOCKERFILEDIR}
-git clone git://github.com/docker/containerd.git
-mv containerd/ docker/containerd/
-cd ${DOCKERFILEDIR}/docker/containerd
-git checkout v0.2.3
-make
-make install
-rm -rf /usr/local/bin/docker-containerd*
-mv /usr/local/bin/containerd /usr/local/bin/docker-containerd
-mv /usr/local/bin/ctr /usr/local/bin/docker-containerd-ctr
-mv /usr/local/bin/containerd-shim /usr/local/bin/docker-containerd-shim
+rm -rf /usr/local/bin/docker-*
+sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh runc
+sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh tini
+sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh proxy
+sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh containerd
 
-#编译 docker-runc 【需要 libseccomp-2.3.3 支持】
-cd ${DOCKERFILEDIR}
-go get github.com/opencontainers/runc
-cd ${DOCKERFILEDIR}/opencontainers/runc
-git checkout v1.0.0-rc2
-make
-make install
-rm /usr/local/bin/docker-runc
-cp /usr/local/sbin/runc /usr/local/bin/docker-runc
+# sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh tomlv
+# sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh vndr
+# sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh proxy-dynamic
+# sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh containerd-dynamic
+# sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh runc-dynamic
 
-#编译 docker-init
-cd ${DOCKERFILEDIR}
-git clone git://github.com/krallin/tini.git
-cd tini
-git checkout v0.13.0
-cmake .
-make && make install
-ln -s ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/ld-linux-armhf.so.3 /lib/ld-linux-armhf.so.3
-rm /usr/local/bin/docker-init
-mv /usr/local/bin/tini /usr/local/bin/docker-init
+# #编译 docker-containerd 【关联 protobuf 】
+# cd ${DOCKERFILEDIR}
+# git clone git://github.com/docker/containerd.git
+# mv containerd/ docker/containerd/
+# cd ${DOCKERFILEDIR}/docker/containerd
+# git checkout v0.2.3
+# make
+# make install
+# rm -rf /usr/local/bin/docker-containerd*
+# mv /usr/local/bin/containerd /usr/local/bin/docker-containerd
+# mv /usr/local/bin/ctr /usr/local/bin/docker-containerd-ctr
+# mv /usr/local/bin/containerd-shim /usr/local/bin/docker-containerd-shim
 
-#编译 docker-proxy
-cd ${DOCKERFILEDIR}
-git clone git://github.com/docker/libnetwork.git
-cd libnetwork/cmd/proxy/
-go build -ldflags="$PROXY_LDFLAGS" -o /usr/local/bin/docker-proxy
+# #编译 docker-runc 【需要 libseccomp-2.3.3 支持】
+# cd ${DOCKERFILEDIR}
+# go get github.com/opencontainers/runc
+# cd ${DOCKERFILEDIR}/opencontainers/runc
+# git checkout v1.0.0-rc2
+# make
+# make install
+# rm /usr/local/bin/docker-runc
+# cp /usr/local/sbin/runc /usr/local/bin/docker-runc
+
+# #编译 docker-init
+# cd ${DOCKERFILEDIR}
+# git clone git://github.com/krallin/tini.git
+# cd tini
+# git checkout v0.13.0
+# cmake .
+# make && make install
+# ln -s ${ARM_GNU}/arm-linux-gnueabihf/sysroot/lib/ld-linux-armhf.so.3 /lib/ld-linux-armhf.so.3
+# rm /usr/local/bin/docker-init
+# mv /usr/local/bin/tini /usr/local/bin/docker-init
+
+# #编译 docker-proxy
+# cd ${DOCKERFILEDIR}
+# git clone git://github.com/docker/libnetwork.git
+# cd libnetwork/cmd/proxy/
+# go build -ldflags="$PROXY_LDFLAGS" -o /usr/local/bin/docker-proxy
