@@ -216,9 +216,7 @@ cp ${PREFIXDIR}/lib/libseccomp* /usr/local/lib/
 #编译docker运行可执行文件
 #【 docker-containerd docker-containerd-ctr docker-containerd-shim docker-init docker-proxy docker-runc 】
 
-DOCKERFILEDIR=/go/src/github.com/
-
-#编译 docker-containerd 【关联 protobuf】
+#编译 docker-containerd 【关联 protobuf 】
 cd ${DOCKERFILEDIR}
 go get github.com/docker/containerd
 cd ${DOCKERFILEDIR}/docker/containerd
