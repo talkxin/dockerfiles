@@ -60,13 +60,10 @@ EOF
 source  ~/.profile 
 
 #修改 make.sh 编译文件
-patch -p0 < /opt/armbuild/make.sh.patch
-
-#设置编译文件夹
-mkdir -p ${HOMEDIR}/armbuild/
-cd ${HOMEDIR}/armbuild/
+patch -p0 < ${HOMEDIR}/armbuild/make.sh.patch
 
 #下载交叉编译链
+cd ${HOMEDIR}/armbuild/
 git clone git://github.com/raspberrypi/tools.git
 
 #交叉编译 libseccomp-dev
