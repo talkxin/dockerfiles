@@ -199,13 +199,6 @@ sed -i 's/#define malloc rpl_malloc/#define rpl_malloc=malloc/g' config.h
 make && make install
 cd ${HOMEDIR}/armbuild/
 
-#安装最新golang【安装最新版 docker-containerd 时需要最少go-1.8以上支持 当前版本不需要安装】
-# wget https://dl.google.com/go/go1.11.linux-amd64.tar.gz
-# tar zxvf go1.11.linux-amd64.tar.gz
-# rm -rf /usr/local/go/
-# mv go/ /usr/local/go/
-# cd ${HOMEDIR}/armbuild/
-
 #调整lib路径，使ld引入
 mkdir -p ${ARM_GNU}/arm-linux-gnueabihf/sysroot/usr/local/
 cp -r ${PREFIXDIR}/lib64/* ${PREFIXDIR}/lib/
@@ -219,11 +212,12 @@ cp ${PREFIXDIR}/lib/libseccomp* /usr/local/lib/
 rm -rf /usr/local/bin/docker-*
 sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh runc tini proxy containerd
 
-# sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh tomlv
-# sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh vndr
-# sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh proxy-dynamic
-# sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh containerd-dynamic
-# sh /go/src/github.com/docker/docker/hack/dockerfile/install-binaries.sh runc-dynamic
+#安装最新golang【安装最新版 docker-containerd 时需要最少go-1.8以上支持 当前版本不需要安装】
+# cd ${HOMEDIR}/armbuild/
+# wget https://dl.google.com/go/go1.11.linux-amd64.tar.gz
+# tar zxvf go1.11.linux-amd64.tar.gz
+# rm -rf /usr/local/go/
+# mv go/ /usr/local/go/
 
 # #编译 docker-containerd 【关联 protobuf 】
 # cd ${DOCKERFILEDIR}
