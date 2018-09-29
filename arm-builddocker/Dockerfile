@@ -2,7 +2,7 @@ FROM dockercore/docker:17.05
 
 LABEL maintainer "talkxin <talkxin@gmail.com>"
 
-ADD dockercore.sh /opt/armbuild/dockercore.sh
+ADD dockercore-arm.sh /opt/armbuild/dockercore-arm.sh
 
 ADD lvm2.patch /opt/armbuild/lvm2.patch
 
