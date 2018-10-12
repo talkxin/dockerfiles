@@ -1,14 +1,24 @@
 #!/bin/sh
 
-
+#镜像源头
 #docker pull dockercore/docker:17.05
-
+#重新编译镜像
 #docker build -t talkliu/docker-arm:17.05 .
-
+#启动镜像
 #docker run --rm -i --privileged -e BUILDFLAGS -e KEEPBUNDLE -e DOCKER_BUILD_GOGC -e DOCKER_BUILD_PKGS -e DOCKER_CLIENTONLY -e DOCKER_DEBUG -e DOCKER_EXPERIMENTAL -e DOCKER_GITCOMMIT -e DOCKER_GRAPHDRIVER=devicemapper -e DOCKER_INCREMENTAL_BINARY -e DOCKER_REMAP_ROOT -e DOCKER_STORAGE_OPTS -e DOCKER_USERLANDPROXY -e TESTDIRS -e TESTFLAGS -e TIMEOUT -v "/Users/liuxin/Documents/docker/bundles:/go/src/github.com/docker/docker/bundles" -t "talkliu/docker-arm:17.05"
-
+#
+#编译语句
 # hack/make.sh binary
 # hack/make.sh dynbinary
+#
+#docker安装过程
+#sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+#curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg | sudo apt-key add -
+#sudo apt-key fingerprint 0EBFCD88
+#sudo groupadd docker
+#sudo gpasswd -a ${USER} docker
+# sudo cp 17.05.0-ce-rc1/binary-client/docker* /usr/bin/
+# sudo cp 17.05.0-ce-rc1/binary-daemon/docker* /usr/bin/
 
 # 支持依赖安装 gcc-arm-linux-gnueabihf
 # echo "deb http://ftp.de.debian.org/debian sid main" >> /etc/apt/sources.list
@@ -141,14 +151,14 @@ cd util-linux-2.32/
 ./configure --host=${CCHOST} --prefix=${PREFIXDIR} --without-systemd --without-python
 make LDFLAGS="-L${PREFIXDIR}/lib -ltinfo" && make install
 
-#交叉编译expat
+#交叉编译 expat
 cd ${HOMEDIR}/armbuild/
 apt-get source expat
 cd expat-2.1.0
 ./configure --host=${CCHOST} --prefix=${PREFIXDIR}
 make && make install
 
-#交叉编译dbus
+#交叉编译 dbus
 cd ${HOMEDIR}/armbuild/
 apt-get source libdbus-1-dev
 cd dbus-1.8.22/
