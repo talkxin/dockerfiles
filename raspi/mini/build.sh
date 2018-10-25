@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 #install build tools
-sudo apt-get install -y gcc-arm-linux-gnueabi curl xz-utils u-boot-tools
+apt-get install -y gcc-arm-linux-gnueabi curl xz-utils u-boot-tools make gcc bc libncurses5-dev bison flex
 
 TOOLS=arm-linux-gnueabi
 LINUXVERSION=linux-4.10
@@ -9,22 +9,26 @@ BUSYBOXVERSION=busybox-1.24.2
 LIBSDIR=/usr/${TOOLS}/lib/
 DEFCONFIG=$1
 SKIP_KERNEL_REBUILD=0
+OUTPUTDIR="output/"
 
 if [ $DEFCONFIG -n ] 
 then
 	echo "build.sh error:unknow linux build deconfig"
 	echo "default use whith versatile_defconfig build linux"
-	DEFCONFIG=versatile_defconfig
+	DEFCONFIG="versatile_defconfig"
 	# exit 1
 fi
 
-sudo rm -rf ${LINUXVERSION}
-sudo rm -rf ${BUSYBOXVERSION}
-sudo rm -rf rootfs*
-sudo rm -rf tmpfs
-sudo rm -rf zImage
-sudo rm -rf *.dtb
-sudo rm -rf ramdisk.*
+rm -rf ${LINUXVERSION}
+rm -rf ${BUSYBOXVERSION}
+rm -rf rootfs*
+rm -rf tmpfs
+rm -rf zImage
+rm -rf *.dtb
+rm -rf ramdisk.*
+
+#创建输出文件
+mkdir -p $OUTPUTDIR
 
 # tar xvf linux-4.10.tar.xz
 # tar xvf busybox-1.24.2.tar.bz2
@@ -48,25 +52,25 @@ if [ $SKIP_KERNEL_REBUILD -ne 1 ]; then
 	# System Type  --->
 	#     [ ] Enable the L2x0 outer cache controller
 
-	curl https://cdn.kernel.org/pub/linux/kernel/v4.x/${LINUXVERSION}.tar.xz | tar xJf -
+	# curl https://cdn.kernel.org/pub/linux/kernel/v4.x/${LINUXVERSION}.tar.xz | tar xJf -
+	tar xvf ${LINUXVERSION}.tar.xz
 
 	cd ${LINUXVERSION}
 
 	#versatile_defconfig
 	#vexpress_defconfig
-	make CROSS_COMPILE=${TOOLS}- ARCH=arm DEFCONFIG
-
+	make CROSS_COMPILE=${TOOLS}- ARCH=arm $DEFCONFIG
+	patch -p0 < ../linux_versatile.patch
 	make CROSS_COMPILE=${TOOLS}- ARCH=arm menuconfig
-
 	make CROSS_COMPILE=${TOOLS}- ARCH=arm zImage dtbs -j4
 
-	cp arch/arm/boot/zImage ../
+	cp -f arch/arm/boot/zImage ../${OUTPUTDIR}
 
-	if [[ "$(echo $1 | grep "vexpress")" != "" ]]
+	if [[ "$(echo $DEFCONFIG | grep "vexpress")" != "" ]]
 	then
-	  cp arch/arm/boot/dts/vexpress-v2p-ca9.dtb ../
+	  cp -f arch/arm/boot/dts/vexpress-v2p-ca9.dtb ../${OUTPUTDIR}
 	else
-	  cp arch/arm/boot/dts/versatile-pb.dtb ../
+	  cp -f arch/arm/boot/dts/versatile-pb.dtb ../${OUTPUTDIR}
 	fi
 
 	cd ..
@@ -74,19 +78,20 @@ fi
 
 #build busybox
 
-# Build Options  ---> 
-#     [*] Build BusyBox as a static binary (no shared libs)
+# Busybox Settings  --->
+# 	Build Options  ---> 
+#     	[*] Build BusyBox as a static binary (no shared libs)
 
-curl https://busybox.net/downloads/${BUSYBOXVERSION}.tar.bz2 | tar xjf -
+# curl https://busybox.net/downloads/${BUSYBOXVERSION}.tar.bz2 | tar xjf -
+tar xvf ${BUSYBOXVERSION}.tar.bz2
+
 
 cd ${BUSYBOXVERSION}
 
 make defconfig
-
+patch -p0 < ../busybox_defconfig.patch
 make CROSS_COMPILE=${TOOLS}- ARCH=arm menuconfig
-
 make CROSS_COMPILE=${TOOLS}- ARCH=arm
-
 make CROSS_COMPILE=${TOOLS}- ARCH=arm install
 
 cd ..
@@ -95,36 +100,28 @@ cd ..
 
 mkdir -p rootfs/{dev,etc/init.d,lib}
 
-sudo cp ${BUSYBOXVERSION}/_install/* -r rootfs/
+cp ${BUSYBOXVERSION}/_install/* -r rootfs/
+cp -P ${LIBSDIR}/* rootfs/lib/
+cp ${BUSYBOXVERSION}/examples/bootfloppy/etc/* -r rootfs/etc/
 
-sudo cp -P ${LIBSDIR}/* rootfs/lib/
-
-sudo cp ${BUSYBOXVERSION}/examples/bootfloppy/etc/* -r rootfs/etc/
-
-sudo mknod rootfs/dev/tty1 c 4 1
-sudo mknod rootfs/dev/tty2 c 4 2
-sudo mknod rootfs/dev/tty3 c 4 3
-sudo mknod rootfs/dev/tty4 c 4 4
-sudo mknod rootfs/dev/console c 5 1
-sudo mknod rootfs/dev/null c 1 3
+mknod rootfs/dev/tty1 c 4 1
+mknod rootfs/dev/tty2 c 4 2
+mknod rootfs/dev/tty3 c 4 3
+mknod rootfs/dev/tty4 c 4 4
+mknod rootfs/dev/console c 5 1
+mknod rootfs/dev/null c 1 3
 
 dd if=/dev/zero of=rootfs.ext2 bs=1M count=32
 
 mkfs.ext2 rootfs.ext2
 
-sudo mkdir tmpfs
-
-sudo mount -t ext2 rootfs.ext2 tmpfs/ -o loop
-
-sudo cp -r rootfs/*  tmpfs/
-
-# sudo echo "helo world" > tmpfs/hello.txt
-
-sudo umount tmpfs
-
-sudo gzip --best -c rootfs.ext2 > ramdisk.gz
-
-sudo mkimage -n "ramdisk" -A arm -O linux -T ramdisk -C gzip -d ramdisk.gz ramdisk.img
+mkdir tmpfs
+mount -t ext2 rootfs.ext2 tmpfs/ -o loop
+cp -r rootfs/*  tmpfs/
+umount tmpfs
+gzip --best -c rootfs.ext2 > ramdisk.gz
+mkimage -n "ramdisk" -A arm -O linux -T ramdisk -C gzip -d ramdisk.gz ramdisk.img
+cp -r rootfs.ext2 $OUTPUTDIR
 
 
 #control +a x 
