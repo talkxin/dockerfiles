@@ -1,17 +1,18 @@
 #!/bin/bash -e
 
 #install build tools
-apt-get install -y gcc-arm-linux-gnueabi curl xz-utils u-boot-tools make gcc bc libncurses5-dev bison flex
+apt-get install -y gcc-arm-linux-gnueabi curl xz-utils u-boot-tools make gcc bc libncurses5-dev bison flex patch unzip
 
 TOOLS=arm-linux-gnueabi
 LINUXVERSION=linux-4.10
 BUSYBOXVERSION=busybox-1.24.2
 LIBSDIR=/usr/${TOOLS}/lib/
 DEFCONFIG=$1
+IMAGECOUNT=$2
 SKIP_KERNEL_REBUILD=0
 OUTPUTDIR="output/"
 
-if [ $DEFCONFIG -n ] 
+if [ ! $DEFCONFIG ] 
 then
 	echo "build.sh error:unknow linux build deconfig"
 	echo "default use whith versatile_defconfig build linux"
@@ -19,12 +20,18 @@ then
 	# exit 1
 fi
 
+if [ ! $IMAGECOUNT ] 
+then
+	IMAGECOUNT=32
+fi
+
+
 rm -rf ${LINUXVERSION}
 rm -rf ${BUSYBOXVERSION}
-rm -rf rootfs*
 rm -rf tmpfs
 rm -rf zImage
 rm -rf *.dtb
+rm -rf rootfs*
 rm -rf ramdisk.*
 
 #创建输出文件
@@ -53,14 +60,18 @@ if [ $SKIP_KERNEL_REBUILD -ne 1 ]; then
 	#     [ ] Enable the L2x0 outer cache controller
 
 	# curl https://cdn.kernel.org/pub/linux/kernel/v4.x/${LINUXVERSION}.tar.xz | tar xJf -
-	tar xvf ${LINUXVERSION}.tar.xz
+	tar xf ${LINUXVERSION}.tar.xz
 
 	cd ${LINUXVERSION}
 
 	#versatile_defconfig
 	#vexpress_defconfig
 	make CROSS_COMPILE=${TOOLS}- ARCH=arm $DEFCONFIG
-	patch -p0 < ../linux_versatile.patch
+	if [ "$DEFCONFIG"x = "versatile_defconfig"x ] ; then 
+		patch -p0 < ../linux_versatile.patch
+	else
+		patch -p0 < ../linux_vexpress.patch
+	fi
 	make CROSS_COMPILE=${TOOLS}- ARCH=arm menuconfig
 	make CROSS_COMPILE=${TOOLS}- ARCH=arm zImage dtbs -j4
 
@@ -83,7 +94,7 @@ fi
 #     	[*] Build BusyBox as a static binary (no shared libs)
 
 # curl https://busybox.net/downloads/${BUSYBOXVERSION}.tar.bz2 | tar xjf -
-tar xvf ${BUSYBOXVERSION}.tar.bz2
+tar xf ${BUSYBOXVERSION}.tar.bz2
 
 
 cd ${BUSYBOXVERSION}
@@ -98,6 +109,7 @@ cd ..
 
 #rootfs
 
+unzip 17.05.0-ce-rc1.zip
 mkdir -p rootfs/{dev,etc/init.d,lib}
 
 cp ${BUSYBOXVERSION}/_install/* -r rootfs/
@@ -111,18 +123,22 @@ mknod rootfs/dev/tty4 c 4 4
 mknod rootfs/dev/console c 5 1
 mknod rootfs/dev/null c 1 3
 
-dd if=/dev/zero of=rootfs.ext2 bs=1M count=32
+dd if=/dev/zero of=rootfs.ext2 bs=1M count=${IMAGECOUNT}
 
 mkfs.ext2 rootfs.ext2
 
-mkdir tmpfs
+mkdir -p tmpfs
 mount -t ext2 rootfs.ext2 tmpfs/ -o loop
 cp -r rootfs/*  tmpfs/
+cp 17.05.0-ce-rc1/docker* tmpfs/usr/bin/
 umount tmpfs
 gzip --best -c rootfs.ext2 > ramdisk.gz
 mkimage -n "ramdisk" -A arm -O linux -T ramdisk -C gzip -d ramdisk.gz ramdisk.img
-cp -r rootfs.ext2 $OUTPUTDIR
-
+if [ "$DEFCONFIG"x = "versatile_defconfig"x ] ; then 
+	cp -r ramdisk.img $OUTPUTDIR
+else
+	cp -r rootfs.ext2 $OUTPUTDIR
+fi
 
 #control +a x 
 # qemu-system-arm -M vexpress-a9 \
@@ -139,7 +155,7 @@ cp -r rootfs.ext2 $OUTPUTDIR
 # -dtb versatile-pb.dtb \
 # -append "rw earlyprintk loglevel=8 console=ttyAMA0,115200 dwc_otg.lpm_enable=0 rootfstype=ext2 root=/dev/ram init=/linuxrc ramdisk_size=32768" \
 # -serial stdio \
-# -initrd rootfs.ext2 \
+# -initrd ramdisk.img \
 # -cpu arm1176 #raspi add this
 
 

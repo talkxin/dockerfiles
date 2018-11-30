@@ -2,15 +2,6 @@ diff --git .config .config
 index 76b5c13..fb0d2d3 100644
 --- .config
 +++ .config
-@@ -1,7 +1,7 @@
- #
- # Automatically generated make config: don't edit
- # Busybox version: 1.24.2
--# Wed Oct 24 02:37:02 2018
-+# Wed Oct 24 02:56:44 2018
- #
- CONFIG_HAVE_DOT_CONFIG=y
- 
 @@ -57,7 +57,7 @@ CONFIG_FEATURE_HAVE_RPC=y
  #
  # Build Options
