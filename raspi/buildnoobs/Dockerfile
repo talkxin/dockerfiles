@@ -1,7 +1,7 @@
 #用于编译树莓派noobs
 FROM ubuntu:18.04
 #noobs必要关联软件
-RUN apt-get update && apt-get install -y wget git zip make gcc g++ cpio python bc rsync qt4-linguist-tools texinfo
+RUN apt-get update && apt-get install -y wget git zip make gcc g++ cpio python bc rsync qt4-linguist-tools texinfo libncurses5-dev
 #清理镜像
 RUN apt-get clean
 #clone项目
